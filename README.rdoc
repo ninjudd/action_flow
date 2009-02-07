@@ -54,6 +54,16 @@ These are just like link_to and form_tag, but they submit to the :next action, w
 special action for transitioning between states. They also add the parameters necessary
 to maintain context.
 
+== Internals:
+
+When you call the flow class_method in a controller, it creates a controller action for
+each state defined in the specified flow context. It also creates an action called :next
+for transitioning between states. The template helper functions (flow_link_to, and
+flow_form_tag) submit a POST to this action. All transition logic is performed within next
+and then the user is redirected using a GET to the correct state action. This means users
+can safely use their browser back button to return to previous steps and use the forward
+button if they change their mind.
+
 == Install:
 
   sudo gem install ninjudd-flow -s http://gems.github.com
