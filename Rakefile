@@ -6,10 +6,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
     s.name = "flow"
-    s.summary = %Q{TODO}
-    s.email = "justin@geni.com"
+    s.summary = %Q{ A state-machine inspired mixin for controllers that makes creating flows and wizards dead simple. }
+    s.email = "code@justinbalthrop.com"
     s.homepage = "http://github.com/ninjudd/flow"
-    s.description = "TODO"
+    s.description = "A state-machine inspired mixin for controllers that makes creating flows and wizards dead simple."
     s.authors = ["Justin Balthrop"]
   end
 rescue LoadError
