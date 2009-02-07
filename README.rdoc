@@ -50,8 +50,8 @@ two helper functions to make template creation really easy:
     <%= submit_tag %>
   <% end %>
 
-They are just like link_to and form_tag, but they submit to the :next action which is a
-special action for transitioning between states and they also add the parameters necessary
+These are just like link_to and form_tag, but they submit to the :next action, which is a
+special action for transitioning between states. They also add the parameters necessary
 to maintain context.
 
 == Install:
