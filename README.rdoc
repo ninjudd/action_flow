@@ -64,7 +64,7 @@ and then the user is redirected using a GET to the correct state action. This me
 can safely use their browser back button to return to previous steps and use the forward
 button if they change their mind.
 
-Flow::Context is an ActiveRecord model. This allows flows to easily persisted between
+Flow::Context is an ActiveRecord model. This allows flows to be easily persisted between
 steps. If loading the record from the database on each step will be a performance problem
 for you, take a look at http://github.com/ninjudd/record_cache.
 
