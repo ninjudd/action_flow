@@ -2,6 +2,8 @@ require 'meta'
 
 module Flow 
   def flow(name)
+    helper Flow::Helper
+
     flow = "#{name}_flow_context".camelize.constantize
 
     define_method(:context) do
@@ -23,6 +25,24 @@ module Flow
     end
   end
   
+  module Helper
+    def flow_link_to(name, options = {}, html_options = {})
+      options.merge!(flow_options)
+      link_to(name, options, html_options)
+    end
+    
+    def flow_form_tag(options = {}, html_options = {}, *args, &block)
+      options.merge!(flow_options)
+      form_tag(options, html_options, *args, &block)
+    end
+
+  private
+    
+    def flow_options
+      {:controller => controller.controller_name, :action => :next, :k => @context.key}
+    end
+  end
+
   class Context < ActiveRecord::Base
     set_table_name 'flow_contexts'
 

@@ -1,0 +1,63 @@
+= Flow
+
+Flow is a state-machine inspired mixin for controllers that makes creating flows and
+wizards dead simple. It makes generating simple or complex user flows as easy as it should
+be, rather than the painful process it usually is with MVC. Also, it makes your
+controllers that handle flows incredibly skinny, moving the flow logic out of the
+controller into a Flow::Context model.
+
+== Usage:
+
+Say you want to create a multi-page flow for new user signup. Assuming you keep the logic
+for creating users in your User model, where it belongs, this is all the code you would need:
+
+  class NewUserFlowContext < Flow::Context
+    state :start do |params|
+      if params[:already_a_member]
+        transition(:login)
+      else
+        transition(:signup)
+      end
+    end
+
+    state :login
+
+    state :signup do |params|
+      if User.name_taken?(params[:username])
+        transition(:signup)
+      else
+        u = User.create(params)
+        data[:user_id] = u.id
+        transition(:confirm)
+      end
+    end 
+  end
+
+  class NewUserController
+    extend Flow
+    flow :new_user
+  end
+
+Then you just create a template for each state in app/views/new_user. Flow also provides
+two helper functions to make template creation really easy:
+
+  <%= flow_link_to "I already have an account", :already_a_member => true %>
+  
+  <% flow_form_tag do -%>
+    <%= text_field_tag :name %>
+    <%= text_field_tag :email_address %>
+    <%= password_field_tag :password %>
+    <%= submit_tag %>
+  <% end %>
+
+They are just like link_to and form_tag, but they submit to the :next action which is a
+special action for transitioning between states and they also add the parameters necessary
+to maintain context.
+
+== Install:
+
+  sudo gem install ninjudd-flow -s http://gems.github.com
+
+== License:
+
+Copyright (c) 2009 Justin Balthrop, Geni.com; Published under The MIT License, see License.txt
