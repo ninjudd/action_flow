@@ -7,8 +7,9 @@ module Flow
     flow = "#{name}_flow_context".camelize.constantize
 
     define_method(:context) do
-      @context ||= flow.find_or_create(params[:k])
+      @context ||= flow.find_or_create(params.delete(:k))
     end
+    private :context
 
     flow.states.each do |state|
       define_method(state) do
@@ -20,6 +21,7 @@ module Flow
     end
 
     define_method(:next) do
+      context.at(params.delete(:state))
       context.fire_transition(params)
       redirect_to(:action => context.state, :k => context.key)
     end
@@ -28,18 +30,20 @@ module Flow
   module Helper
     def flow_link_to(name, options = {}, html_options = {})
       options.merge!(flow_options)
-      link_to(name, options, html_options)
+      html_options.merge!(:post => true)
+      link_to(name, options)
     end
     
     def flow_form_tag(options = {}, html_options = {}, *args, &block)
       options.merge!(flow_options)
+      html_options.merge!(:method => :post)
       form_tag(options, html_options, *args, &block)
     end
 
   private
     
     def flow_options
-      {:controller => controller.controller_name, :action => :next, :k => @context.key}
+      {:controller => controller.controller_name, :action => :next, :state => @context.state, :k => @context.key}
     end
   end
 
@@ -54,8 +58,8 @@ module Flow
     initial :start
 
     def self.find_or_create(key)
-      flow = find_by_key(key) if key
-      flow || create(
+      context = find_by_key(key) if key
+      context || create(
         :states     => [initial],
         :state_data => {},
         :key        => generate_key
@@ -95,9 +99,10 @@ module Flow
     end
 
     def at(state)
+      state = state.to_sym
       if states.include?(state)
         @state = state
-        states.slice!(0..states.index(state))
+        states.slice!(states.index(state) + 1..-1)
       else
         raise InvalidState, "state #{state} not valid in this context"
       end
