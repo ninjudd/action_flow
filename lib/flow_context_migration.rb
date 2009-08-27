@@ -1,10 +1,12 @@
 class FlowContextMigration < ActiveRecord::Migration
   def self.up
     create_table :flow_contexts do |t|
+      t.timestamps
       t.string :key
       t.string :type
       t.text   :states
       t.text   :state_data
+      t.text   :final_destination
     end
     add_index :flow_contexts, :key, :unique => true
   end

@@ -13,7 +13,7 @@ module Flow
 
     flow.states.each do |state|
       define_method(state) do
-        context.at(state)
+        context.at_state(state)
         context.data.each do |key, value|
           instance_variable_set("@#{key}", value)
         end
@@ -21,8 +21,8 @@ module Flow
     end
 
     define_method(:next) do
-      context.at(params.delete(:state))
-      context.fire_transition(params)
+      context.at_state(params.delete(:state))
+      context.fire_transition(self)
       redirect_to(:action => context.state, :k => context.key)
     end
   end
@@ -71,7 +71,7 @@ module Flow
       now = Time.now
       sha.update(now.to_s)
       sha.update(String(now.usec))
-      sha.update(String(rand(0)))
+      sha.update(String(rand))
       sha.update(String($$))
       sha.update('go with the flow')
       sha.hexdigest
@@ -98,7 +98,10 @@ module Flow
       transitions[state] = block
     end
 
-    def at(state)
+    attr_reader :controller
+    delegate :params, :flash, :to => :controller
+
+    def at_state(state)
       state = state.to_sym
       if states.include?(state)
         @state = state
@@ -116,10 +119,11 @@ module Flow
       state_data[:state] ||= {}
     end
 
-    def fire_transition(params)
+    def fire_transition(controller)
+      @controller = controller
       begin
         transition = self.class.transition(state)
-        transition.bind(self).call(params)
+        transition.bind(self).call
       rescue TransitionFired
       end
     end

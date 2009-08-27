@@ -12,7 +12,7 @@ Say you want to create a multi-page flow for new user signup. Assuming you keep 
 for creating users in your User model, where it belongs, this is all the code you would need:
 
   class NewUserFlowContext < Flow::Context
-    state :start do |params|
+    state :start do
       if params[:already_a_member]
         transition(:login)
       else
@@ -22,8 +22,9 @@ for creating users in your User model, where it belongs, this is all the code yo
 
     state :login
 
-    state :signup do |params|
+    state :signup do
       if User.name_taken?(params[:username])
+        flash[:error] = 'Username already taken. Please choose another.'
         transition(:signup)
       else
         u = User.create(params)
