@@ -1,6 +1,6 @@
 = Flow
 
-Flow is a state-machine inspired mixin for controllers that makes creating flows and
+Flow is a simple workflow engine mixin for controllers that makes creating flows and
 wizards dead simple. It makes generating simple or complex user flows as easy as it should
 be, rather than the painful process it usually is with MVC. Also, it makes your
 controllers that handle flows incredibly skinny, moving the flow logic out of the
@@ -70,7 +70,7 @@ steps.
 
 == Install:
 
-  sudo gem install ninjudd-flow -s http://gems.github.com
+  sudo gem install flow
 
 You also need to create a migration to make the flow_contexts table. See examples/sample_migration.rb
 
