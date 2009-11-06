@@ -1,0 +1,18 @@
+sqlite3:
+  database: ":memory:"
+  adapter: sqlite3
+  timeout: 500
+
+mysql:
+  adapter: mysql
+  username: root
+  password:
+  encoding: utf8
+  database: flow_test
+ 
+postgres:
+  adapter: postgresql
+  username: postgres
+  password:
+  database: flow_test
+  min_messages: warning
