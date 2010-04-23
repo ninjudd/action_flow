@@ -1,17 +1,19 @@
-= Flow
+= ActionFlow
 
-Flow is a simple workflow engine mixin for controllers that makes generating simple
+ActionFlow is a simple workflow engine mixin for controllers that makes generating simple
 or complex user flows as easy as it should be, rather than the painful process it usually is with MVC.
 Also, it makes your controllers incredibly skinny, by moving the flow logic out of the
-controller into a Flow::Context model.
+controller into a ActionFlow::Context model.
 
 == Usage:
 
 Say you want to create a multi-page flow for new user signup. Assuming you keep the logic
 for creating users in your User model, where it belongs, this is all the code you would need:
 
-  class NewUserFlowContext < Flow::Context
+  class NewUserFlowContext < ActionFlow::Context
     state :start do
+      redirect_to(:controller => :help) if params[:help]
+
       if params[:already_a_member]
         transition(:login)
       else
@@ -30,19 +32,18 @@ for creating users in your User model, where it belongs, this is all the code yo
         data[:user_id] = u.id
         transition(:confirm)
       end
-    end 
+    end
   end
 
   class NewUserController
-    include Flow
     flow :new_user
   end
 
-Then you just create a template for each state in app/views/new_user. Flow also provides
+Then you just create a template for each state in app/views/new_user. ActionFlow also provides
 two helper functions to make template creation really easy:
 
   <%= flow_link_to "I already have an account", :already_a_member => true %>
-  
+
   <% flow_form_tag do -%>
     <%= text_field_tag :name %>
     <%= text_field_tag :email_address %>
@@ -64,12 +65,12 @@ and then the user is redirected using a GET to the correct state action. This me
 can safely use their browser back button to return to previous steps and use the forward
 button if they change their mind.
 
-Flow::Context is an ActiveRecord model. This allows flows to be easily persisted between
+ActionFlow::Context is an ActiveRecord model. This allows flows to be easily persisted between
 steps.
 
 == Install:
 
-  sudo gem install flow
+  sudo gem install action_flow
 
 You also need to create a migration to make the flow_contexts table. See examples/sample_migration.rb
 

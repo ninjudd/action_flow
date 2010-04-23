@@ -23,9 +23,14 @@ module ActionFlow
     end
 
     define_method(:next) do
-      context.at_state(params.delete(:state))
+      context.at_state(params.delete(:s))
       context.fire_transition(self)
-      redirect_to(:action => context.state, :k => context.key)
+
+      if context.redirect
+        redirect_to(context.redirect)
+      else
+        redirect_to(:action => context.state, :k => context.key)
+      end
     end
   end
 
@@ -45,7 +50,7 @@ module ActionFlow
   private
 
     def flow_options
-      {:controller => controller.controller_name, :action => :next, :state => controller.context.state, :k => controller.context.key}
+      {:controller => controller.controller_name, :action => :next, :s => controller.context.state, :k => controller.context.key}
     end
   end
 
@@ -110,7 +115,7 @@ module ActionFlow
       transitions[state] = block
     end
 
-    attr_reader :controller
+    attr_reader :controller, :redirect
     delegate :params, :flash, :to => :controller
 
     def at_state(state)
@@ -144,6 +149,11 @@ module ActionFlow
       @state = state
       self.states << state
       self.save
+      raise TransitionFired
+    end
+
+    def redirect_to(location)
+      @redirect = location
       raise TransitionFired
     end
 
