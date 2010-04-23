@@ -1,12 +1,11 @@
-require File.expand_path(File.dirname(__FILE__) + '/test_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 require 'action_view/test_case'
 require 'ostruct'
-require 'flow/helper'
 
-module Flow
+module ActionFlow
 
   class HelperTest < ActionView::TestCase
-    tests Flow::Helper
+    tests ActionFlow::Helper
 
     class TestController < ActionController::Base
       attr_accessor :url
@@ -32,9 +31,9 @@ module Flow
       html_options = {:html_option=>'value'}
       with_route do
         result = flow_link_to(text, options, html_options)
-        assert_match 'href="/test/next?', result, 'href missing'
-        assert_match '_fk=key', result, 'flow key missng'
-        assert_match '_fs=state', result, 'flow state missing'
+        assert_match 'href="/test/next', result, 'href missing'
+        assert_match 'k=key', result, 'flow key missng'
+        assert_match 'state=state', result, 'flow state missing'
         assert_match 'option=value', result
         assert_match 'html_option="value"', result
         assert_match '>text</a>', result, 'text missing'
@@ -46,9 +45,9 @@ module Flow
       html_options = {:html_option=>'value'}
       with_route do
         result = flow_form_tag(options, html_options)
-        assert_match 'action="/test/next?', result, 'action missing'
-        assert_match '_fk=key', result, 'flow key missng'
-        assert_match '_fs=state', result, 'flow state missing'
+        assert_match 'action="/test/next', result, 'action missing'
+        assert_match 'k=key', result, 'flow key missng'
+        assert_match 'state=state', result, 'flow state missing'
         assert_match 'option=value', result
         assert_match 'html_option="value"', result
         assert_match 'method="post"', result
@@ -72,4 +71,4 @@ module Flow
 
   end # class HelperTest
 
-end # module Flow
+end # module ActionFlow
